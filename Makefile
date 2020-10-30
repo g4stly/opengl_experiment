@@ -9,7 +9,7 @@ INCLUDE	= include
 TARGET 	= build/hellopp
 SOURCES = src/main.cpp src/util.cpp src/glad.cpp
 SOURCES+= src/application.cpp src/hello.cpp
-SOURCES+= src/shader_factory.cpp
+SOURCES+= src/shader_factory.cpp src/texture.cpp
 OBJECTS	= $(SOURCES:.cpp=.o)
 
 all: $(TARGET)

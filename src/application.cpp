@@ -74,10 +74,11 @@ int Application::execute()
 {
 	while (!glfwWindowShouldClose(window)) {
 		update();
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		draw();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	free();
 	return 0;
 }

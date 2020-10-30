@@ -9,6 +9,7 @@ class Hello : public Application {
 	void load();
 	void update();
 	void draw();
+	void free();
 public:
 	Hello();
 	~Hello();

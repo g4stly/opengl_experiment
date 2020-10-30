@@ -40,6 +40,20 @@ static char *read_buffer(const char *filename)
 	return buffer;
 }
 
+Shader *Shader::set_mat4(const char *name, float *value)
+{
+	GLint location = glGetUniformLocation(id, name);
+	glUniformMatrix4fv(location, 1, GL_FALSE, value);
+	return this;
+}
+
+Shader *Shader::set_int(const char *name, int value)
+{
+	GLint location = glGetUniformLocation(id, name);
+	glUniform1i(location, value);
+	return this;
+}
+
 void Shader::use()
 {
 	glUseProgram(id);
@@ -89,12 +103,13 @@ ShaderFactory::ShaderFactory()
 {
 }
 
-void ShaderFactory::create_shader(Shader *s, const char *v, const char *f)
+Shader *ShaderFactory::create_shader(Shader *s, const char *v, const char *f)
 {
 	s->id = glCreateProgram();
 	glAttachShader(s->id, get_shader(GL_VERTEX_SHADER, v));
 	glAttachShader(s->id, get_shader(GL_FRAGMENT_SHADER, f));
 	programs.push_back(s->id);
+	return s;
 }
 
 void ShaderFactory::link_programs()
