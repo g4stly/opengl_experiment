@@ -1,3 +1,2 @@
 uses opengl 3.3
-has a dependancy on glfw
-(and soon to be glm)
+has a dependancy on glfw and glm
