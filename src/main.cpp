@@ -6,7 +6,8 @@
 int main(int argc, char **argv)
 {
 	Hello app;
-	return app.init(argc, argv)
+	int rv = app.init(argc, argv)
 		->create_window(800, 600)
 		->execute();
+	return rv;
 }

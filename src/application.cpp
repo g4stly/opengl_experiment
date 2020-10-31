@@ -72,8 +72,12 @@ Application *Application::create_window(int w, int h)
 
 int Application::execute()
 {
+	float last_frame = 0;
+	float current_frame = 0;
 	while (!glfwWindowShouldClose(window)) {
-		update();
+		current_frame = glfwGetTime();
+		update(current_frame - last_frame);
+		last_frame = current_frame;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		draw();
 		glfwSwapBuffers(window);

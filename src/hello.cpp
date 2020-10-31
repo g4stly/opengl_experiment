@@ -67,6 +67,20 @@ static float vertices[] = {
 
 };
 
+glm::vec3 positions[] = {
+	glm::vec3( 0.0,  0.0,  0.0),
+	glm::vec3( 2.3,  1.9, -7.0),
+	glm::vec3(-1.9,  0.9, -8.2),
+	glm::vec3( 3.0, -1.4, -0.8),
+	glm::vec3(-0.6,  1.0, -11.0),
+	glm::vec3(-4.0, -0.4, -1.0),
+	glm::vec3(-2.0, -0.0, -7.8),
+	glm::vec3( 2.3, -0.3, -4.3),
+	glm::vec3(-2.0, -1.0, -3.8),
+	glm::vec3(-0.2, -1.2, -0.3),
+	glm::vec3( 1.1,  1.0, -12.0)
+};
+
 static void create_rect(unsigned int *vao, float *v, int v_len)
 {
 	void *offset;
@@ -94,14 +108,9 @@ static void create_rect(unsigned int *vao, float *v, int v_len)
 	glEnableVertexAttribArray(2);
 }
 
-Hello::Hello() 
-{
-
-}
-
-Hello::~Hello() 
-{
-}
+const float sensitivity = 0.005;
+Hello::Hello() : camera(0, 0, 3) {} 
+Hello::~Hello() {} 
 
 static Shader s;
 static Texture wall, face;
@@ -109,6 +118,7 @@ static unsigned int vao;
 void Hello::load()
 {
 	glEnable(GL_DEPTH_TEST);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	create_rect(&vao, vertices, 8 * v_sz);
 
 	wall.load("wood.jpg");
@@ -118,13 +128,49 @@ void Hello::load()
 		&s, "src/shader.vert", "src/shader.frag"
 	);
 	shader_factory.link_programs();
+
 	s.use();
 	s.set_int("tex_wall", 0);
 	s.set_int("tex_face", 1);
+	glm::mat4 proj = glm::perspective(
+		(float)(.25*M_PI),
+		800.0f / 600.0f, 
+		0.1f, 100.0f);
+	s.set_mat4("projection", glm::value_ptr(proj));
 }
 
-void Hello::update()
+static float last_x = 400, last_y = 300;
+void Hello::update(float dt)
 {
+	double x, y;
+	const float cameraSpeed = 4.5 * dt;
+	glfwGetCursorPos(window, &x, &y);
+	camera.rotate(
+		(float)((x - last_x) * sensitivity),
+		(float)((y - last_y) * sensitivity)
+	);
+	last_x = x;
+	last_y = y;
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		camera.mv_fwrd(cameraSpeed);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		camera.mv_back(cameraSpeed);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		camera.mv_left(cameraSpeed);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		camera.mv_rght(cameraSpeed);
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+		camera.mv_up(cameraSpeed);
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+		camera.mv_down(cameraSpeed);
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, 1);
 		return;
@@ -133,28 +179,25 @@ void Hello::update()
 
 void Hello::draw()
 {
-
 	wall.bind(GL_TEXTURE0);
 	face.bind(GL_TEXTURE1);
 
 	s.use();
 
-	glm::mat4 model = glm::mat4(1.0);
-	model = glm::rotate(model, 
-		-(float)(glfwGetTime()*M_PI/2), 
-		glm::vec3(.5, 1, 0));
-	s.set_mat4("model", glm::value_ptr(model));
-
-	glm::mat4 view = glm::mat4(1.0);
-	view = glm::translate(view, glm::vec3(0, 0, -2));
+	glm::mat4 view = camera.get_view();
 	s.set_mat4("view", glm::value_ptr(view));
 
-	glm::mat4 proj = glm::perspective((float)(.5 * M_PI),
-		800.0f / 600.0f, 0.1f, 100.0f);
-	s.set_mat4("projection", glm::value_ptr(proj));
-
 	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, v_sz);
+	for (int i = 0; i < 11; i++) {
+		glm::mat4 model = glm::mat4(1.0);
+		model = glm::translate(model, positions[i]);
+		float r = 20.0 * (i+1) * glfwGetTime();
+		model = glm::rotate(model, 
+			glm::radians(r),
+			glm::vec3(1, .3, .5));
+		s.set_mat4("model", glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, v_sz);
+	}
 }
 
 void Hello::free()
