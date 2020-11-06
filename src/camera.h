@@ -6,10 +6,10 @@
 
 class Camera {
 	glm::vec3 up;
-	glm::vec3 pos;
 	glm::vec3 front;
 	float pitch, yaw;
 public:
+	glm::vec3 pos;
 	/*
 	 * not actually rotation, just translate the point
 	 * (on a 3d sphere around the camera origin) that
