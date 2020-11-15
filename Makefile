@@ -10,8 +10,8 @@ TARGET 	= build/hellopp
 SOURCES = src/main.cpp src/util.cpp src/glad.cpp
 SOURCES+= src/application.cpp src/hello.cpp
 SOURCES+= src/shader_factory.cpp src/texture.cpp
-SOURCES+= src/camera.cpp src/triangles.cpp src/cube.cpp
-SOURCES+= src/cube_texture.cpp
+SOURCES+= src/camera.cpp src/trianglesv.cpp
+SOURCES+= src/cubev.cpp
 OBJECTS	= $(SOURCES:.cpp=.o)
 
 all: $(TARGET)

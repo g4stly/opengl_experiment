@@ -15,6 +15,7 @@ class Shader
 public:
 	unsigned int id;
 	Shader *set_mat4(const char *name, float *value);
+	Shader *set_vec3(const char *name, float *value);
 	Shader *set_int(const char *name, int value);
 	void use();
 };

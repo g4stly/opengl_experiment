@@ -47,6 +47,13 @@ Shader *Shader::set_mat4(const char *name, float *value)
 	return this;
 }
 
+Shader *Shader::set_vec3(const char *name, float *value)
+{
+	GLint location = glGetUniformLocation(id, name);
+	glUniform3fv(location, 1, value);
+	return this;
+}
+
 Shader *Shader::set_int(const char *name, int value)
 {
 	GLint location = glGetUniformLocation(id, name);
